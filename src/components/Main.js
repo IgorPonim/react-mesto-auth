@@ -3,12 +3,11 @@ import { api } from '../utils/Api';
 import Profile from './Profile';
 import Card from './Card';
 
-const Main = ({ onEditProfile, onAddPlace, onEditAvatar }) => {
+const Main = ({ onEditProfile, onAddPlace, onEditAvatar, onCardClick }) => {
     const [userName, setUserName] = useState('')
     const [userJob, setuserJob] = useState('')
     const [userAvatar, setUserAvatar] = useState('')
     const [cards, setCards] = useState([])
-    const [selectedCard, setSelectedCard] = useState(undefined);
 
     useEffect(() => {
         Promise.all([api.getUserInfo(), api.getInitialCards()])
@@ -17,20 +16,24 @@ const Main = ({ onEditProfile, onAddPlace, onEditAvatar }) => {
                 setUserName(data[0].name)//все по классике, первый эелемент массива
                 setuserJob(data[0].about)
                 setUserAvatar(data[0].avatar)
-                setCards(data[1]);//карточки єто второй єлемент массива который отправил сервер
+                setCards(data[1]);//карточки єто второй єлемент массива
 
             })
             .catch((er) => {
                 console.log(er);
             });
-    }, []);//а то будет бесконечный запрос!!!
+    }, []);//а то без конца отправка запроса
+
 
     return (
         <main>
-            <Profile name={userName} about={userJob} avatar={userAvatar} onEditProfile={onEditProfile} onAddClick={onAddPlace} onAvatarEditClick={onEditAvatar} />
+            <Profile name={userName} avatar={userAvatar} about={userJob}
+                onEditProfile={onEditProfile} onAddClick={onAddPlace}
+                onAvatarEditClick={onEditAvatar} />
             <section className='elements'>
+                {/*поставил _id в key,а то react ругался*/}
                 {cards.map((el) => {
-                    return <Card key={el._id} name={el.name} link={el.link} likes={el.likes.length} />
+                    return <Card card={el} key={el._id} onCardClick={onCardClick} />
                 })}
             </section>
 
