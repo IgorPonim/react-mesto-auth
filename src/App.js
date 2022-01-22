@@ -6,16 +6,16 @@ import PopupWithForm from './components/PopupWithForm';
 import ImagePopup from './components/ImagePopup';
 
 function App() {
-  document.body.classList.add('body')
+
   const [isEditProfilePopupOpen, setIsEditProfilePopupOpen] = useState(false)//изначально нет класса visible
   const [isPlacePopupOpen, setIsPlacePopupOpen] = useState(false)
   const [isEditAvatarPopupOpen, setIsEditAvatarPopupOpen] = useState(false)
-  const [selectedCard, setSelectedCard] = useState() //undefined
+  const [selectedCard, setSelectedCard] = useState(null) //зануллил стейт как вы и сказали
 
 
   function closeAllPopups() {//функция закрытия попапов
     setIsEditProfilePopupOpen(false);
-    setSelectedCard('');
+    setSelectedCard(null) // и здесь зануллил :)
     setIsPlacePopupOpen(false);
     setIsEditAvatarPopupOpen(false);
   }
@@ -30,9 +30,10 @@ function App() {
   function onAddPlace() {
     setIsPlacePopupOpen(true)
   }
-  function onCardClick(el) {
-    setSelectedCard(el)
+  function onCardClick(card) {
+    setSelectedCard(card)
   }
+
 
 
   return (
@@ -52,21 +53,21 @@ function App() {
       <Footer />
 
       <PopupWithForm isOpen={isEditProfilePopupOpen} onClose={closeAllPopups} title='Редактировать профиль' name='profile'>
-        <><input id='input-name' name='name' minLength='2' maxLength='40' required type='text' placeholder='Имя'
+        <input id='input-name' name='name' minLength='2' maxLength='40' required type='text' placeholder='Имя'
           className='popup__input popup__input_type_name' />
-          <span id='input-name-error' className='popup__error popup-username-error'></span>
-          <input id='input-job' name='job' minLength='2' maxLength='200' required type='text' placeholder='Род занятий'
-            className='popup__input popup__input_type_job' />
-          <span id='input-job-error' className='popup__error popup-job-error '></span></>
+        <span id='input-name-error' className='popup__error popup-username-error'></span>
+        <input id='input-job' name='job' minLength='2' maxLength='200' required type='text' placeholder='Род занятий'
+          className='popup__input popup__input_type_job' />
+        <span id='input-job-error' className='popup__error popup-job-error '></span>
       </PopupWithForm>
 
       <PopupWithForm isOpen={isPlacePopupOpen} onClose={closeAllPopups} title='Новое место' name='place-info'>
-        <>  <input id='input-element-name' name='name' minLength='2' maxLength='40' required type='text'
+        <input id='input-element-name' name='name' minLength='2' maxLength='40' required type='text'
           placeholder='Название' className='popup__input popup__input_type_name-element' />
-          <span id='input-element-name-error' className='popup__error popup-element-error'></span>
-          <input id='input-element-link' name='link' type='url' required placeholder='Ссылка на картинку'
-            className='popup__input popup__input_type_link' />
-          <span id='input-element-link-error' className='popup__error popup-link-error'></span></>
+        <span id='input-element-name-error' className='popup__error popup-element-error'></span>
+        <input id='input-element-link' name='link' type='url' required placeholder='Ссылка на картинку'
+          className='popup__input popup__input_type_link' />
+        <span id='input-element-link-error' className='popup__error popup-link-error'></span>
       </PopupWithForm>
 
 
