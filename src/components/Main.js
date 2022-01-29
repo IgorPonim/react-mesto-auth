@@ -1,13 +1,13 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useContext } from 'react';
 import { api } from '../utils/Api.js';
 import Profile from './Profile';
 import Card from './Card';
+import { CurrentUserContext } from '../contexts/CurrentUserContext.js';
 
 const Main = ({ onEditProfile, onAddPlace, onEditAvatar, onCardClick }) => {
-    const [userName, setUserName] = useState('')
-    const [userJob, setuserJob] = useState('')
-    const [userAvatar, setUserAvatar] = useState('')
+
     const [cards, setCards] = useState([])
+    const { name, about, avatar } = useContext(CurrentUserContext) //деструктуризация рулит
 
     // useEffect(() => {
     //     Promise.all([api.getUserInfo(), api.getInitialCards()])
@@ -22,16 +22,14 @@ const Main = ({ onEditProfile, onAddPlace, onEditAvatar, onCardClick }) => {
     // }, []);//а то без конца отправка запроса
 
 
-    //согласен, можно лаконичнее
+    //оставил только карточки
     useEffect(() => {
-        Promise.all([api.getUserInfo(), api.getInitialCards()])
-            .then(([user, cards]) => { 
-                setUserName(user.name)
-                setuserJob(user.about)
-                setUserAvatar(user.avatar)
-                setCards(cards)       
+        api.getInitialCards()
+            .then((cards) => {
+
+                setCards(cards)
             })
-            .catch((err) => { 
+            .catch((err) => {
                 console.log(err);
             })
     }, [])
@@ -40,9 +38,9 @@ const Main = ({ onEditProfile, onAddPlace, onEditAvatar, onCardClick }) => {
     return (
         <main>
             <Profile
-                name={userName}
-                avatar={userAvatar}
-                about={userJob}
+                name={name}
+                avatar={avatar}
+                about={about}
                 onEditProfile={onEditProfile}
                 onAddClick={onAddPlace}
                 onAvatarEditClick={onEditAvatar} />
