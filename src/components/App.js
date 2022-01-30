@@ -7,6 +7,7 @@ import ImagePopup from './ImagePopup';
 import { CurrentUserContext } from '../contexts/CurrentUserContext'
 import { api } from '../utils/Api';
 import EditProfilePopup from './EditProfilePopup';
+import EditAvatarPopup from './EditAvatarPopup';
 
 function App() {
 
@@ -50,7 +51,6 @@ function App() {
   }, [])
 
   function editUserInfo(newInfo) {
-
     api.editUserInfo(newInfo)
       .then((data) => {
         setCurrentUser(data)
@@ -59,6 +59,20 @@ function App() {
         console.log(err);
       })
   }
+
+
+function handleUpdateAvatar(newLink){
+  api.changeAvatar(newLink)
+      .then((data) => {
+        setCurrentUser(data)
+      })
+      .catch((err) => {
+        console.log(err);
+      })
+}
+
+
+
 
 
   return (
@@ -85,12 +99,8 @@ function App() {
           <span id='input-element-link-error' className='popup__error popup-link-error'></span>
         </PopupWithForm>
 
-
-        <PopupWithForm isOpen={isEditAvatarPopupOpen} onClose={closeAllPopups} title='Обновить аватар' name='avatar-info'>
-          <input id='input-ava-link' name='link' type='url' required placeholder='Ссылка на картинку'
-            className='popup__input popup__input_type_link' />
-          <span id='input-ava-link-error' className='popup__error popup-link-error'></span>
-        </PopupWithForm>
+        <EditAvatarPopup isOpen={isEditAvatarPopupOpen} onClose={closeAllPopups} sendInfoAvatar={handleUpdateAvatar}/> 
+        
 
         <ImagePopup onClose={closeAllPopups} card={selectedCard} />
       </CurrentUserContext.Provider>
