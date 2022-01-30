@@ -6,6 +6,7 @@ import PopupWithForm from './PopupWithForm';
 import ImagePopup from './ImagePopup';
 import { CurrentUserContext } from '../contexts/CurrentUserContext'
 import { api } from '../utils/Api';
+import EditProfilePopup from './EditProfilePopup';
 
 function App() {
 
@@ -48,6 +49,18 @@ function App() {
       })
   }, [])
 
+  function editUserInfo(newInfo) {
+
+    api.editUserInfo(newInfo)
+      .then((data) => {
+        setCurrentUser(data)
+      })
+      .catch((err) => {
+        console.log(err);
+      })
+  }
+
+
   return (
 
     <div className='page'>
@@ -61,14 +74,7 @@ function App() {
         />
         <Footer />
 
-        <PopupWithForm isOpen={isEditProfilePopupOpen} onClose={closeAllPopups} title='Редактировать профиль' name='profile'>
-          <input id='input-name' name='name' minLength='2' maxLength='40' required type='text' placeholder='Имя'
-            className='popup__input popup__input_type_name' />
-          <span id='input-name-error' className='popup__error popup-username-error'></span>
-          <input id='input-job' name='job' minLength='2' maxLength='200' required type='text' placeholder='Род занятий'
-            className='popup__input popup__input_type_job' />
-          <span id='input-job-error' className='popup__error popup-job-error '></span>
-        </PopupWithForm>
+        <EditProfilePopup isOpen={isEditProfilePopupOpen} onClose={closeAllPopups} sendInfo={editUserInfo} />
 
         <PopupWithForm isOpen={isPlacePopupOpen} onClose={closeAllPopups} title='Новое место' name='place-info'>
           <input id='input-element-name' name='name' minLength='2' maxLength='40' required type='text'
