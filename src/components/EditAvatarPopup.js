@@ -25,7 +25,7 @@ const EditAvatarPopup = ({ isOpen, onClose, sendInfoAvatar }) => {
         sendInfoAvatar(
             avatar
         );
-        onClose()
+        // onClose()
     }
 
 

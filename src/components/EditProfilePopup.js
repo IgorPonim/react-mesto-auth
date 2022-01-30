@@ -3,7 +3,7 @@ import { useEffect } from "react";
 import { useContext } from "react";
 import PopupWithForm from "./PopupWithForm";
 import { CurrentUserContext } from "../contexts/CurrentUserContext";
-import react from "react";
+
 
 const EditProfilePopup = ({ isOpen, onClose, sendInfo }) => {
 
@@ -29,7 +29,7 @@ const EditProfilePopup = ({ isOpen, onClose, sendInfo }) => {
     function onSubmit(ev) {
         ev.preventDefault()
         sendInfo({ name, job })
-        onClose()
+        // onClose()
     }
 
 
