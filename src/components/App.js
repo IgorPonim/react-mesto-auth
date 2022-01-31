@@ -18,7 +18,7 @@ function App() {
   const [isEditAvatarPopupOpen, setIsEditAvatarPopupOpen] = useState(false)
   const [selectedCard, setSelectedCard] = useState(null)
 
-  const [currentUser, setCurrentUser] = useState('')//ок
+  const [currentUser, setCurrentUser] = useState({})
   const [cards, setCards] = useState([]);
 
   function closeAllPopups() {

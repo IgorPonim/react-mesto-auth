@@ -2,16 +2,15 @@
 import { useEffect } from "react";
 const PopupWithForm = ({ name, title, isOpen, onClose, children, onSubmit, buttonText }) => {
 
-  useEffect(() => {
-    if (!onClose) return;  //если так то сработает на всех попапах
 
+  useEffect(() => {
+    if (!isOpen) return;  //Геннадий, если даже примите работу, напишите пожалуйста а что делать с ImagePopup, там же не использовался isOpen, если тупо скопировать это все туда и поменять isOpen на Card это не ошибка? или как правильно поступить?
     const closeByEscape = (e) => {
       if (e.key === 'Escape') {
         onClose();
       }
     }
     document.addEventListener('keydown', closeByEscape)
-
     return () => document.removeEventListener('keydown', closeByEscape)//красиво
 
   }, [isOpen, onClose])
@@ -22,7 +21,6 @@ const PopupWithForm = ({ name, title, isOpen, onClose, children, onSubmit, butto
 
     }
   }
-
 
 
   return (
