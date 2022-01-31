@@ -5,7 +5,7 @@ import PopupWithForm from "./PopupWithForm";
 import { CurrentUserContext } from "../contexts/CurrentUserContext";
 
 
-const EditProfilePopup = ({ isOpen, onClose, sendInfo }) => {
+const EditProfilePopup = ({ isOpen, onClose, sendInfo , buttonText}) => {
 
     const currentUser = useContext(CurrentUserContext)
 
@@ -13,7 +13,7 @@ const EditProfilePopup = ({ isOpen, onClose, sendInfo }) => {
     const [job, setJob] = useState('')
 
 
-//собираю данные инпутов
+    //собираю данные инпутов
     function onChange(ev) {
         if (ev.target.name === 'name') { setName(ev.target.value) }
         else if (ev.target.name === 'job') { setJob(ev.target.value) }
@@ -23,7 +23,7 @@ const EditProfilePopup = ({ isOpen, onClose, sendInfo }) => {
     useEffect(() => {
         setName(currentUser.name);
         setJob(currentUser.about);
-    }, [currentUser]);
+    }, [currentUser, isOpen]); //точняк, надо на открытие подписаться, иначе поля не заполняюся, пропустил
 
     //отправляю данные и закрыаю попап
     function onSubmit(ev) {
@@ -34,12 +34,12 @@ const EditProfilePopup = ({ isOpen, onClose, sendInfo }) => {
 
 
     return (
-        <PopupWithForm onSubmit={onSubmit} isOpen={isOpen} onClose={onClose} title='Редактировать профиль' name='profile'>
-            <input onChange={onChange} 
-            
-            value={name || ''} //вот здесь долго я репу чесал, просто сервер еще не прислал значения поэтому ошибка была
-            
-            id='input-name' name='name' minLength='2' maxLength='40' required type='text' placeholder='Имя'
+        <PopupWithForm buttonText={buttonText} onSubmit={onSubmit} isOpen={isOpen} onClose={onClose} title='Редактировать профиль' name='profile'>
+            <input onChange={onChange}
+
+                value={name || ''} //вот здесь долго я репу чесал, просто сервер еще не прислал значения поэтому ошибка была
+
+                id='input-name' name='name' minLength='2' maxLength='40' required type='text' placeholder='Имя'
                 className='popup__input popup__input_type_name' />
             <span id='input-name-error' className='popup__error popup-username-error'></span>
             <input onChange={onChange} value={job || ''} id='input-job' name='job' minLength='2' maxLength='200' required type='text' placeholder='Род занятий'

@@ -5,9 +5,9 @@ import Card from './Card';
 import { CurrentUserContext } from '../contexts/CurrentUserContext.js';
 
 const Main = ({ onEditProfile, onAddPlace, onEditAvatar, onCardClick,
-    cards, onCardLike, onCardDelete}) => {
+    cards, onCardLike, onCardDelete }) => {
 
-    
+
     const currentUser = useContext(CurrentUserContext)
 
 
@@ -23,7 +23,7 @@ const Main = ({ onEditProfile, onAddPlace, onEditAvatar, onCardClick,
             <section className='elements'>
                 {/*поставил _id в key,а то react ругался*/}
                 {cards.map((card) => {
-                    return <Card card={card} key={card._id} onCardClick={onCardClick} onCardLike={onCardLike} onCardDelete={onCardDelete} />
+                    return (<Card card={card} key={card._id} onCardClick={onCardClick} onCardLike={onCardLike} onCardDelete={onCardDelete} />)
                 })}
             </section>
 

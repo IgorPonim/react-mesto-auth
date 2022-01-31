@@ -18,7 +18,7 @@ function App() {
   const [isEditAvatarPopupOpen, setIsEditAvatarPopupOpen] = useState(false)
   const [selectedCard, setSelectedCard] = useState(null)
 
-  const [currentUser, setCurrentUser] = useState('иогу писать что хочу, api рулит')
+  const [currentUser, setCurrentUser] = useState('')//ок
   const [cards, setCards] = useState([]);
 
   function closeAllPopups() {
@@ -108,7 +108,10 @@ function App() {
     api.changeLikeCardStatus(card._id, !isLiked)
       .then((newCard) => {
         setCards((state) => state.map((c) => c._id === card._id ? newCard : c));
-      });
+      })
+      .catch((err) => {
+        console.log(err)
+      })
   }
 
 
@@ -117,7 +120,10 @@ function App() {
     api.deleteСards(card._id)
       .then(() => {
         setCards((state) => state.filter((c) => c._id !== card._id)); //наконец то fiter пригодился, я уж думал где его используют..
-      });
+      })
+      .catch((err) => {
+        console.log(err)
+      })
 
   }
 
@@ -153,14 +159,14 @@ function App() {
         />
         <Footer />
 
-        <EditProfilePopup isOpen={isEditProfilePopupOpen} onClose={closeAllPopups} sendInfo={editUserInfo} />
+        <EditProfilePopup  buttonText={'Сохранить'} isOpen={isEditProfilePopupOpen} onClose={closeAllPopups} sendInfo={editUserInfo} />
 
-        <AddPlacePopup isOpen={isPlacePopupOpen} onClose={closeAllPopups} addElement={handleAddPlaceSubmit} />
+        <AddPlacePopup buttonText={'Создать'} isOpen={isPlacePopupOpen} onClose={closeAllPopups} addElement={handleAddPlaceSubmit} />
 
-        <EditAvatarPopup isOpen={isEditAvatarPopupOpen} onClose={closeAllPopups} sendInfoAvatar={handleUpdateAvatar} />
+        <EditAvatarPopup  buttonText={'Изменить'} isOpen={isEditAvatarPopupOpen} onClose={closeAllPopups} sendInfoAvatar={handleUpdateAvatar} />
 
 
-        <ImagePopup onClose={closeAllPopups} card={selectedCard} />
+        <ImagePopup  onClose={closeAllPopups} card={selectedCard} />
       </CurrentUserContext.Provider>
     </div>
 
