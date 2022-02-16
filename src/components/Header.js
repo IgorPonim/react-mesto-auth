@@ -1,16 +1,22 @@
 
 import { Link, Route, Switch, BrowserRouter } from 'react-router-dom'
+import { useHistory } from 'react-router-dom/cjs/react-router-dom.min'
 import mesto from '../images/mesto.svg'
 import '../styles/Header.css'
 
 const Header = ({ email }) => {
-
+    //забираю токен из памяти
     function onLoggout() {
         localStorage.removeItem('jwt')
     }
+    const history = useHistory()
+   
 
+
+    
     return (
         <header className='header'>
+            <div className={ `${history.location.pathname === '/' ? 'header__line' : 'popup'}`}></div>
             <img className='header__logo' src={mesto} alt='Лого' />
             <div className='header__menu'>
                 <Switch>

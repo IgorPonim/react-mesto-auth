@@ -81,3 +81,10 @@
     font-family: 'Inter', Arial, sans-serif;
     color: #CCCCCC;
 }
+
+
+@media screen and (max-width: 425px) {
+    .register__form {
+        max-width: 260px;
+    }
+}

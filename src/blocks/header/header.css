@@ -13,5 +13,8 @@
         width: 100%;
         min-height: 58px;
         margin-top: 28px;
+        display: flex;
+        flex-direction: column-reverse;
+        align-items: center;
     }
 }

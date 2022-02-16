@@ -33,7 +33,7 @@ function App() {
   const [toolType, setToolType] = useState('result')
   const [email, setEmail] = useState('');
 
-
+  //если мы уже вошли ранее он зайдет сам
   useEffect(() => {
     if (localStorage.getItem('jwt')) {
       const jwt = localStorage.getItem('jwt')
@@ -42,14 +42,13 @@ function App() {
         .then((res) => {
           if (res) {
             // console.log(res)
+            history.push('/')
             setLoggedIn(true);
             setEmail(res.data.email);
-            history.push('/')
 
           } else {
             setLoggedIn(false);
             setEmail('');
-            history.push('/sign-in')
           }
         })
         .catch((error) => {
@@ -178,7 +177,7 @@ function App() {
       })
   }
 
-
+  //////////////////////здесь функции взаимодействия с логином и tooltype пр12
 
   function handleLoggedIn() {
     setLoggedIn(true)
@@ -196,6 +195,13 @@ function App() {
     setIsToolTipOpen(false)
   }
 
+  //чтобы сообщение само закрывалось, так модно, молодежно
+  useEffect(() => {
+    setTimeout(() => {
+      closeToolTipe()
+    }, 2500);
+
+  }, [isToolTipOpen])
 
   return (
 

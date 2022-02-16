@@ -14,9 +14,9 @@ export const register = (email, password) => {
       if (!res.ok) {
         throw new Error('Register Error');
       }
-      return res.json();
-    });
-};
+      return res.json()
+    })
+}
 
 
 
@@ -29,13 +29,14 @@ export const authorize = (email, password) => {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({ email, password })
+
     })
 
     .then((res) => {
       if (!res.ok) {
-        throw new Error('authorize Error');
+        throw new Error('Authorization Error');
       }
-      return res.json();
+      return res.json()
     })
 
     .then((data) => {
@@ -43,7 +44,6 @@ export const authorize = (email, password) => {
         localStorage.setItem('jwt', data.token)
         console.log(data)
         return data
-        
       }
     })
 }
@@ -63,6 +63,6 @@ export const tokenCheck = (token) => {
 
     .then((res) => {
       return res.json();
-    });
+    })
 
 }
