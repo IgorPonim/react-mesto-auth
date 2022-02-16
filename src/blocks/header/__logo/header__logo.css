@@ -9,5 +9,8 @@
         max-width: 104px;
         max-height: 24.4px;
         margin-left: 27px;
+        margin-top: 20px ;
+        align-self: flex-start;
+        margin-bottom: 20px;
     }
 }

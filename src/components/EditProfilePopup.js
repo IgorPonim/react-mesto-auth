@@ -3,9 +3,10 @@ import { useEffect } from "react";
 import { useContext } from "react";
 import PopupWithForm from "./PopupWithForm";
 import { CurrentUserContext } from "../contexts/CurrentUserContext";
+import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 
 
-const EditProfilePopup = ({ isOpen, onClose, sendInfo , buttonText}) => {
+const EditProfilePopup = ({ isOpen, onClose, sendInfo, buttonText }) => {
 
     const currentUser = useContext(CurrentUserContext)
 
@@ -31,6 +32,7 @@ const EditProfilePopup = ({ isOpen, onClose, sendInfo , buttonText}) => {
         sendInfo({ name, job })
         // onClose()
     }
+
 
 
     return (
