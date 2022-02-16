@@ -9,7 +9,13 @@ import { api } from '../utils/Api';
 import EditProfilePopup from './EditProfilePopup';
 import EditAvatarPopup from './EditAvatarPopup';
 import AddPlacePopup from './AddPlacePopup';
-
+import InfoToolTip from './InfoToolTip';
+import ProtectedRoute from './ProtectedRoute.js'
+import Login from './Login'
+import Register from './Register';
+import * as auth from '../auth'
+import { useHistory } from 'react-router-dom/cjs/react-router-dom.min';
+import { Route, Switch, BrowserRouter } from 'react-router-dom';
 
 function App() {
 
@@ -20,6 +26,39 @@ function App() {
 
   const [currentUser, setCurrentUser] = useState({})
   const [cards, setCards] = useState([]);
+
+  const history = useHistory()
+  const [loggedIn, setLoggedIn] = useState(false)
+  const [isToolTipOpen, setIsToolTipOpen] = useState(false)
+  const [toolType, setToolType] = useState('result')
+  const [email, setEmail] = useState('');
+
+
+  useEffect(() => {
+    if (localStorage.getItem('jwt')) {
+      const jwt = localStorage.getItem('jwt')
+
+      auth.tokenCheck(jwt)
+        .then((res) => {
+          if (res) {
+            // console.log(res)
+            setLoggedIn(true);
+            setEmail(res.data.email);
+            history.push('/')
+
+          } else {
+            setLoggedIn(false);
+            setEmail('');
+            history.push('/sign-in')
+          }
+        })
+        .catch((error) => {
+          console.log(error)
+        });
+    }
+  }, [loggedIn])
+
+
 
   function closeAllPopups() {
     setIsEditProfilePopupOpen(false);
@@ -90,7 +129,7 @@ function App() {
   useEffect(() => {
     api.getInitialCards()
       .then((cards) => {
-        // cards.sort(() => 0.5 - Math.random()) //надоели одни и те же карточки
+        cards.sort(() => 0.5 - Math.random()) //надоели одни и те же карточки
         setCards(cards)
       })
       .catch((err) => {
@@ -141,32 +180,60 @@ function App() {
 
 
 
+  function handleLoggedIn() {
+    setLoggedIn(true)
+  }
+
+  function toolTipeError() {
+    setIsToolTipOpen(true)
+    setToolType('error')
+  }
+  function toolTipeRegister() {
+    setIsToolTipOpen(true)
+    setToolType('result')
+  }
+  function closeToolTipe() {
+    setIsToolTipOpen(false)
+  }
+
 
   return (
 
     <div className='page'>
       {/* обернул контекстом всю страницу */}
       <CurrentUserContext.Provider value={currentUser} >
-        <Header />
-        <Main
-          onEditProfile={onEditProfile}
-          onAddPlace={onAddPlace}
-          onEditAvatar={onEditAvatar}
-          onCardClick={onCardClick}
-          cards={cards}
-          onCardLike={handleCardLike}
-          onCardDelete={handleCardDelete}
-        />
-        <Footer />
+        <Header email={email} />
+        <Switch>
+          <Route path='/sign-up'>
+            <Register error={toolTipeError} result={toolTipeRegister} />
+          </Route>
+          <Route path='/sign-in'>
+            <Login loggedIn={handleLoggedIn} onError={toolTipeError} />
+          </Route>
+          <ProtectedRoute loggedIn={loggedIn} path='/'>
+            <Main
+              onEditProfile={onEditProfile}
+              onAddPlace={onAddPlace}
+              onEditAvatar={onEditAvatar}
+              onCardClick={onCardClick}
+              cards={cards}
+              onCardLike={handleCardLike}
+              onCardDelete={handleCardDelete}
+            />
+            <Footer />
 
-        <EditProfilePopup  buttonText={'Сохранить'} isOpen={isEditProfilePopupOpen} onClose={closeAllPopups} sendInfo={editUserInfo} />
+            <EditProfilePopup buttonText={'Сохранить'} isOpen={isEditProfilePopupOpen} onClose={closeAllPopups} sendInfo={editUserInfo} />
 
-        <AddPlacePopup buttonText={'Создать'} isOpen={isPlacePopupOpen} onClose={closeAllPopups} addElement={handleAddPlaceSubmit} />
+            <AddPlacePopup buttonText={'Создать'} isOpen={isPlacePopupOpen} onClose={closeAllPopups} addElement={handleAddPlaceSubmit} />
 
-        <EditAvatarPopup  buttonText={'Изменить'} isOpen={isEditAvatarPopupOpen} onClose={closeAllPopups} sendInfoAvatar={handleUpdateAvatar} />
+            <EditAvatarPopup buttonText={'Изменить'} isOpen={isEditAvatarPopupOpen} onClose={closeAllPopups} sendInfoAvatar={handleUpdateAvatar} />
 
 
-        <ImagePopup  onClose={closeAllPopups} card={selectedCard} />
+            <ImagePopup onClose={closeAllPopups} card={selectedCard} />
+
+          </ProtectedRoute>
+        </Switch>
+        <InfoToolTip status={toolType} isOpen={isToolTipOpen} onClose={closeToolTipe} />
       </CurrentUserContext.Provider>
     </div>
 

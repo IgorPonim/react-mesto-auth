@@ -4,7 +4,7 @@ const PopupWithForm = ({ name, title, isOpen, onClose, children, onSubmit, butto
 
 
   useEffect(() => {
-    if (!isOpen) return;  //Геннадий, если даже примите работу, напишите пожалуйста а что делать с ImagePopup, там же не использовался isOpen, если тупо скопировать это все туда и поменять isOpen на Card это не ошибка? или как правильно поступить?
+    if (!isOpen) return; 
     const closeByEscape = (e) => {
       if (e.key === 'Escape') {
         onClose();
