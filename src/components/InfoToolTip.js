@@ -9,11 +9,11 @@ const InfoToolTip = ({ isOpen, onClose, status }) => {
 
 
 
-  
+
 
     return (
         <div className={`popup  ${isOpen ? 'popup_open' : ''}`}>
-            <div className='popup__content' onClick={onClose} >
+            <div className='popup__content'  >
                 <button type='button' onClick={onClose} className='popup__close'></button>
                 {status === 'result' && (
                     <>

@@ -204,6 +204,9 @@ function App() {
   function showToolTipeRegister() {
     setIsToolTipOpen(true)
     setToolType('result')
+    setTimeout(() => { //ну я могу так сделать, если следовать вашей подсказке
+      setIsToolTipOpen(false)
+    }, 2000);
   }
   function closeToolTipe() {
     setIsToolTipOpen(false)
@@ -214,15 +217,13 @@ function App() {
     localStorage.removeItem('jwt')
   }
 
-  //чтобы сообщение само закрывалось, так модно, молодежно
-  useEffect(() => {
+  // //чтобы сообщение само закрывалось, так модно, молодежно
+  // useEffect(() => {
+  //   setTimeout(() => {
+  //     closeToolTipe()
+  //   }, 2500);
 
-    setTimeout(() => {
-
-      closeToolTipe()
-    }, 2500);
-
-  }, [isToolTipOpen])
+  // }, [isToolTipOpen])
 
   return (
 
