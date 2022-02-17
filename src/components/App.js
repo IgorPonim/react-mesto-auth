@@ -15,7 +15,7 @@ import Login from './Login'
 import Register from './Register';
 import * as auth from '../auth'
 import { useHistory } from 'react-router-dom/cjs/react-router-dom.min';
-import { Route, Switch, BrowserRouter } from 'react-router-dom';
+import { Route, Switch, BrowserRouter, Redirect } from 'react-router-dom';
 
 function App() {
 
@@ -38,7 +38,7 @@ function App() {
     if (localStorage.getItem('jwt')) {
       const jwt = localStorage.getItem('jwt')
 
-      auth.tokenCheck(jwt)
+      auth.checkToken(jwt)
         .then((res) => {
           if (res) {
             // console.log(res)
@@ -55,7 +55,7 @@ function App() {
           console.log(error)
         });
     }
-  }, [loggedIn])
+  }, [loggedIn, history]) //не могу с вами согласиться, не понимаю как убрать отсюда loggedin ведь он не отследит статус пользователя
 
 
 
@@ -79,17 +79,8 @@ function App() {
   function onCardClick(card) {
     setSelectedCard(card)
   }
-  //запрос на сервер с данными по профилю, как в пр10
-  useEffect(() => {
-    api.getUserInfo()
-      .then((data) => {
-        setCurrentUser(data)
-        closeAllPopups()
-      })
-      .catch((err) => {
-        console.log(err)
-      })
-  }, [])
+
+
   //отправка запроса с новыми данными пользователя
   function editUserInfo(newInfo) {
     api.editUserInfo(newInfo)
@@ -117,25 +108,25 @@ function App() {
 
 
 
-  /////////////////////////////////////////////////////////////////////////////////////////////////////////
-  /////////////////////////////////////////////////////////////////////////////////////////////////////////
-  //секция куда перенес из main работу с карточками
-
-
-
-
-
+  //согласен, обьединил загрузку пользователя и карточек и повесил слушатель на loggedin
   useEffect(() => {
-    api.getInitialCards()
-      .then((cards) => {
-        cards.sort(() => 0.5 - Math.random()) //надоели одни и те же карточки
-        setCards(cards)
-      })
-      .catch((err) => {
-        console.log(err)
-      })
+    if (loggedIn) {
+      Promise.all([
+        api.getUserInfo(),
+        api.getInitialCards()
+      ])
+        .then(([user, cards]) => {
+          setCurrentUser(user)
+          // cards.sort(() => 0.5 - Math.random()) //надоели одни и те же карточки
+          setCards(cards)
+        })
+        .catch((err) => {
+          console.log(err);
+        })
+    }
+  }, [loggedIn]);
 
-  }, [])
+
 
 
   function handleCardLike(card) {
@@ -177,17 +168,40 @@ function App() {
       })
   }
 
-  //////////////////////здесь функции взаимодействия с логином и tooltype пр12
 
-  function handleLoggedIn() {
-    setLoggedIn(true)
+  function handleLoggedIn(email, password) {
+    auth.authorize(email, password)
+      .then((res) => {
+        if (res.token) {
+          setLoggedIn(true)
+          history.push('/')
+
+        }
+      })
+      .catch((err) => {
+        console.log(err)
+        showToolTipeError()
+      })
+
   }
 
-  function toolTipeError() {
+  function handleRegister(email, password) {
+    auth.register(email, password)
+      .then(() => {
+        showToolTipeRegister()
+        history.push('/sign-in')
+      })
+      .catch((err) => {
+        showToolTipeError()
+        console.log(err)
+      })
+  }
+
+  function showToolTipeError() {
     setIsToolTipOpen(true)
     setToolType('error')
   }
-  function toolTipeRegister() {
+  function showToolTipeRegister() {
     setIsToolTipOpen(true)
     setToolType('result')
   }
@@ -195,9 +209,16 @@ function App() {
     setIsToolTipOpen(false)
   }
 
+  //забираю токен из памяти
+  function onLoggout() {
+    localStorage.removeItem('jwt')
+  }
+
   //чтобы сообщение само закрывалось, так модно, молодежно
   useEffect(() => {
+
     setTimeout(() => {
+
       closeToolTipe()
     }, 2500);
 
@@ -208,14 +229,15 @@ function App() {
     <div className='page'>
       {/* обернул контекстом всю страницу */}
       <CurrentUserContext.Provider value={currentUser} >
-        <Header email={email} />
+        <Header onLoggout={onLoggout} email={email} />
         <Switch>
-          <Route path='/sign-up'>
-            <Register error={toolTipeError} result={toolTipeRegister} />
+          <Route exact path='/sign-up'>
+            <Register onRegister={handleRegister} />
           </Route>
-          <Route path='/sign-in'>
-            <Login loggedIn={handleLoggedIn} onError={toolTipeError} />
+          <Route exact path='/sign-in'>
+            <Login loggedIn={handleLoggedIn} />
           </Route>
+
           <ProtectedRoute loggedIn={loggedIn} path='/'>
             <Main
               onEditProfile={onEditProfile}
@@ -226,20 +248,21 @@ function App() {
               onCardLike={handleCardLike}
               onCardDelete={handleCardDelete}
             />
-            <Footer />
-
-            <EditProfilePopup buttonText={'Сохранить'} isOpen={isEditProfilePopupOpen} onClose={closeAllPopups} sendInfo={editUserInfo} />
-
-            <AddPlacePopup buttonText={'Создать'} isOpen={isPlacePopupOpen} onClose={closeAllPopups} addElement={handleAddPlaceSubmit} />
-
-            <EditAvatarPopup buttonText={'Изменить'} isOpen={isEditAvatarPopupOpen} onClose={closeAllPopups} sendInfoAvatar={handleUpdateAvatar} />
-
-
-            <ImagePopup onClose={closeAllPopups} card={selectedCard} />
-
           </ProtectedRoute>
         </Switch>
+
+        <Footer />
+
+        <EditProfilePopup buttonText={'Сохранить'} isOpen={isEditProfilePopupOpen} onClose={closeAllPopups} sendInfo={editUserInfo} />
+
+        <AddPlacePopup buttonText={'Создать'} isOpen={isPlacePopupOpen} onClose={closeAllPopups} addElement={handleAddPlaceSubmit} />
+
+        <EditAvatarPopup buttonText={'Изменить'} isOpen={isEditAvatarPopupOpen} onClose={closeAllPopups} sendInfoAvatar={handleUpdateAvatar} />
+
+        <ImagePopup onClose={closeAllPopups} card={selectedCard} />
+
         <InfoToolTip status={toolType} isOpen={isToolTipOpen} onClose={closeToolTipe} />
+
       </CurrentUserContext.Provider>
     </div>
 

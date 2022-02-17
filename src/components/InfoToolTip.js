@@ -4,6 +4,7 @@ import NO from '../images/NO.png'
 import YES from '../images/YES.png'
 
 
+
 const InfoToolTip = ({ isOpen, onClose, status }) => {
 
 
