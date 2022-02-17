@@ -1,7 +1,7 @@
-export const Base_URL = 'https://auth.nomoreparties.co';
+export const BASE_URL = 'https://auth.nomoreparties.co';
 
 export const register = (email, password) => {
-  return fetch(`${Base_URL}/signup`, {
+  return fetch(`${BASE_URL}/signup`, {
     method: 'POST',
     headers: {
       'Accept': 'application/json',
@@ -21,7 +21,7 @@ export const register = (email, password) => {
 
 
 export const authorize = (email, password) => {
-  return fetch(`${Base_URL}/signin`,
+  return fetch(`${BASE_URL}/signin`,
     {
       method: 'POST',
       headers: {
@@ -51,8 +51,8 @@ export const authorize = (email, password) => {
 
 
 
-export const tokenCheck = (token) => {
-  return fetch(`${Base_URL}/users/me`, {
+export const checkToken = (token) => {
+  return fetch(`${BASE_URL}/users/me`, {
     method: 'GET',
     headers: {
       'Accept': 'application/json',
@@ -61,8 +61,11 @@ export const tokenCheck = (token) => {
     }
   })
 
-    .then((res) => {
-      return res.json();
+   .then((res) => {
+      if (!res.ok) {
+        throw new Error('Problem with token');
+      }
+      return res.json()
     })
 
 }
