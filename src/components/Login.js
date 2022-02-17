@@ -1,13 +1,11 @@
-import { useHistory } from "react-router-dom";
 import { useState } from "react";
-import * as auth from '../auth'
-import PopupWithForm from "./PopupWithForm"
-import RegisterCss from '../styles/RegisterCss.css'
 import { Link } from "react-router-dom"
+
+
 const Login = ({ loggedIn }) => {
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
-    const history = useHistory()
+
 
 
     function handleChange(ev) {

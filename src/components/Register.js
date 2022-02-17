@@ -1,7 +1,6 @@
-import { useHistory } from "react-router-dom/cjs/react-router-dom.min"
-import { useState } from "react/cjs/react.development"
+import { useState } from "react";
 import { Link } from "react-router-dom"
-import RegisterCss from '../styles/RegisterCss.css'
+
 
 const Register = ({ onRegister }) => {
     const [email, setEmail] = useState('')

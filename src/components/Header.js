@@ -1,7 +1,7 @@
 
 import { Link, Route, Switch, BrowserRouter } from 'react-router-dom'
 import mesto from '../images/mesto.svg'
-import '../styles/Header.css'
+
 
 const Header = ({ email, onLoggout }) => {
     
