@@ -23,7 +23,7 @@ function App() {
   const [isEditProfilePopupOpen, setIsEditProfilePopupOpen] = useState(false)
   const [isPlacePopupOpen, setIsPlacePopupOpen] = useState(false)
   const [isEditAvatarPopupOpen, setIsEditAvatarPopupOpen] = useState(false)
- 
+
   const [selectedCard, setSelectedCard] = useState(null)
 
   const [currentUser, setCurrentUser] = useState({})
@@ -34,6 +34,9 @@ function App() {
   const [isToolTipOpen, setIsToolTipOpen] = useState(false)
   const [toolType, setToolType] = useState('result')
   const [email, setEmail] = useState('');
+  //для смены подписи кнопки, спасибо за подсказку))
+  const [isLoading, setIsLoading] = useState(false);
+
 
   //если мы уже вошли ранее он зайдет сам
   useEffect(() => {
@@ -67,6 +70,7 @@ function App() {
     setIsPlacePopupOpen(false);
     setIsEditAvatarPopupOpen(false);
     setIsConfirmPopupOpen(null)
+    setIsToolTipOpen(false)
   }
 
   function onEditProfile() {
@@ -82,7 +86,7 @@ function App() {
   function onCardClick(card) {
     setSelectedCard(card)
   }
- 
+
 
 
   //отправка запроса с новыми данными пользователя
@@ -150,17 +154,18 @@ function App() {
 
 
   function handleCardDelete(card) {
-    
+    setIsLoading(true)
     api.deleteСards(card._id)
       .then(() => {
         setCards((state) => state.filter((c) => c._id !== card._id)); //наконец то fiter пригодился, я уж думал где его используют..
-        
-        closeAllPopups()
       })
       .catch((err) => {
         console.log(err)
       })
-      
+      .finally(() => {
+        setIsLoading(false)
+        closeAllPopups()
+      })
   }
 
 
@@ -176,18 +181,18 @@ function App() {
   }
 
 
-  function handleLoggedIn(email, password) {
+  function handleLogin(email, password) {
     auth.authorize(email, password)
       .then((res) => {
         if (res.token) {
           setLoggedIn(true)
           history.push('/')
-
+          setEmail(email)
         }
       })
       .catch((err) => {
         console.log(err)
-        showToolTipeError()
+        showToolTipError()
       })
 
   }
@@ -195,29 +200,27 @@ function App() {
   function handleRegister(email, password) {
     auth.register(email, password)
       .then(() => {
-        showToolTipeRegister()
+        showToolTipRegister()
         history.push('/sign-in')
       })
       .catch((err) => {
-        showToolTipeError()
+        showToolTipError()
         console.log(err)
       })
   }
 
-  function showToolTipeError() {
+  function showToolTipError() {
     setIsToolTipOpen(true)
     setToolType('error')
   }
-  function showToolTipeRegister() {
+  function showToolTipRegister() {
     setIsToolTipOpen(true)
     setToolType('result')
     setTimeout(() => { //впринципе я могу так сделать, если следовать вашей подсказке
       setIsToolTipOpen(false)
     }, 2000);
   }
-  function closeToolTipe() {
-    setIsToolTipOpen(false)
-  }
+
 
   //забираю токен из памяти
   function onLoggout() {
@@ -233,7 +236,7 @@ function App() {
   // }, [isToolTipOpen])
 
   const [isConfirmPopupOpen, setIsConfirmPopupOpen] = useState(null)
-  function onConfirmClick(data){
+  function onConfirmClick(data) {
     setIsConfirmPopupOpen(data)
   }
 
@@ -251,7 +254,7 @@ function App() {
             <Register onRegister={handleRegister} />
           </Route>
           <Route exact path='/sign-in'>
-            <Login loggedIn={handleLoggedIn} />
+            <Login loggedIn={handleLogin} />
           </Route>
 
           <ProtectedRoute loggedIn={loggedIn} path='/'>
@@ -276,9 +279,9 @@ function App() {
         <EditAvatarPopup buttonText={'Изменить'} isOpen={isEditAvatarPopupOpen} onClose={closeAllPopups} sendInfoAvatar={handleUpdateAvatar} />
 
         <ImagePopup onClose={closeAllPopups} card={selectedCard} />
-        <ConfirmationPopup  card={isConfirmPopupOpen}  handleCardDelete={handleCardDelete}  onClose={closeAllPopups}   />
+        <ConfirmationPopup isLoading={isLoading} card={isConfirmPopupOpen} handleCardDelete={handleCardDelete} onClose={closeAllPopups} />
 
-        <InfoToolTip status={toolType} isOpen={isToolTipOpen} onClose={closeToolTipe} />
+        <InfoToolTip status={toolType} isOpen={isToolTipOpen} onClose={closeAllPopups} />
 
       </CurrentUserContext.Provider>
     </div>

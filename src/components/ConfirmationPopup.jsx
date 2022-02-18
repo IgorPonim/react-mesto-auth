@@ -1,20 +1,9 @@
-import { useEffect } from "react";
 
-const ConfirmationPopup = ({ onClose, handleCardDelete, card }) => {
 
-    const text = document.querySelector('.popup__button_type_confirm')
-    useEffect(() => {
-        if (card) {
-            text.textContent = 'Да'
-        }
-    })
-
+const ConfirmationPopup = ({ onClose, handleCardDelete, card, isLoading }) => {
 
     function handleSubmit(ev) {
-        setTimeout(() => {
-            handleCardDelete(card)
-        }, 600)
-        text.textContent = 'Удаление...'
+        handleCardDelete(card)
         ev.preventDefault()
     }
 
@@ -25,7 +14,7 @@ const ConfirmationPopup = ({ onClose, handleCardDelete, card }) => {
                 <h3 className='popup__title'>Вы уверены?</h3>
                 <form onSubmit={handleSubmit} name={`confirm`} className='popup__form'>
 
-                    <button type='submit' className='popup__button popup__button_type_confirm'>{ }</button>
+                    <button type='submit' className='popup__button popup__button_type_confirm'>{`${isLoading ? 'Удаление...' : 'Да'}`}</button>
                 </form>
             </div>
 
