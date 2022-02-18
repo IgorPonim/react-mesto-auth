@@ -158,13 +158,14 @@ function App() {
     api.deleteСards(card._id)
       .then(() => {
         setCards((state) => state.filter((c) => c._id !== card._id)); //наконец то fiter пригодился, я уж думал где его используют..
+        closeAllPopups()
       })
       .catch((err) => {
         console.log(err)
       })
       .finally(() => {
         setIsLoading(false)
-        closeAllPopups()
+        
       })
   }
 
