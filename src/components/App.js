@@ -13,15 +13,17 @@ import InfoToolTip from './InfoToolTip';
 import ProtectedRoute from './ProtectedRoute.js'
 import Login from './Login'
 import Register from './Register';
-import * as auth from '../auth'
+import * as auth from '../utils/auth'
 import { useHistory } from 'react-router-dom/cjs/react-router-dom.min';
 import { Route, Switch, BrowserRouter, Redirect } from 'react-router-dom';
+import ConfirmationPopup from './ConfirmationPopup';
 
 function App() {
 
   const [isEditProfilePopupOpen, setIsEditProfilePopupOpen] = useState(false)
   const [isPlacePopupOpen, setIsPlacePopupOpen] = useState(false)
   const [isEditAvatarPopupOpen, setIsEditAvatarPopupOpen] = useState(false)
+ 
   const [selectedCard, setSelectedCard] = useState(null)
 
   const [currentUser, setCurrentUser] = useState({})
@@ -55,7 +57,7 @@ function App() {
           console.log(error)
         });
     }
-  }, [loggedIn, history]) //не могу с вами согласиться, не понимаю как убрать отсюда loggedin ведь он не отследит статус пользователя
+  }, [loggedIn, history]) //не могу с вами согласиться, не понимаю как убрать отсюда loggedin ведь тогда он не отследит статус пользователя
 
 
 
@@ -64,6 +66,7 @@ function App() {
     setSelectedCard(null)
     setIsPlacePopupOpen(false);
     setIsEditAvatarPopupOpen(false);
+    setIsConfirmPopupOpen(null)
   }
 
   function onEditProfile() {
@@ -79,6 +82,7 @@ function App() {
   function onCardClick(card) {
     setSelectedCard(card)
   }
+ 
 
 
   //отправка запроса с новыми данными пользователя
@@ -146,14 +150,17 @@ function App() {
 
 
   function handleCardDelete(card) {
+    
     api.deleteСards(card._id)
       .then(() => {
         setCards((state) => state.filter((c) => c._id !== card._id)); //наконец то fiter пригодился, я уж думал где его используют..
+        
+        closeAllPopups()
       })
       .catch((err) => {
         console.log(err)
       })
-
+      
   }
 
 
@@ -225,6 +232,14 @@ function App() {
 
   // }, [isToolTipOpen])
 
+  const [isConfirmPopupOpen, setIsConfirmPopupOpen] = useState(null)
+  function onConfirmClick(data){
+    setIsConfirmPopupOpen(data)
+  }
+
+
+
+
   return (
 
     <div className='page'>
@@ -247,7 +262,7 @@ function App() {
               onCardClick={onCardClick}
               cards={cards}
               onCardLike={handleCardLike}
-              onCardDelete={handleCardDelete}
+              onCardDelete={onConfirmClick}
             />
           </ProtectedRoute>
         </Switch>
@@ -261,6 +276,7 @@ function App() {
         <EditAvatarPopup buttonText={'Изменить'} isOpen={isEditAvatarPopupOpen} onClose={closeAllPopups} sendInfoAvatar={handleUpdateAvatar} />
 
         <ImagePopup onClose={closeAllPopups} card={selectedCard} />
+        <ConfirmationPopup  card={isConfirmPopupOpen}  handleCardDelete={handleCardDelete}  onClose={closeAllPopups}   />
 
         <InfoToolTip status={toolType} isOpen={isToolTipOpen} onClose={closeToolTipe} />
 

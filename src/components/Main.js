@@ -1,4 +1,4 @@
-import { useEffect, useState, useContext } from 'react';
+import { useContext } from 'react';
 import Profile from './Profile';
 import Card from './Card';
 import { CurrentUserContext } from '../contexts/CurrentUserContext.js';
